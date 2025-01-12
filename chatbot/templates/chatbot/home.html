@@ -1,0 +1,72 @@
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="{% static 'chatbot/style.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Chatbot Interface</h1>
+
+    <form
+      id="chat-form"
+      method="post"
+      action="{% url 'chatbot:chatbot_home' %}"
+    >
+      {% csrf_token %}
+      <label for="user_input">Your message:</label>
+      <input type="text" id="user_input" name="user_input" required />
+      <button type="submit">Send</button>
+    </form>
+
+    <div id="conversation-container">
+      <h2>Conversation:</h2>
+      <div id="conversation">
+        {% for message in conversation %}
+        <p><strong>You:</strong> {{ message.user }}</p>
+        <p><strong>Bot:</strong> {{ message.bot }}</p>
+        {% endfor %}
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#chat-form").submit(function (event) {
+          event.preventDefault(); // Prevent normal form submission
+
+          var userInput = $("#user_input").val();
+
+          // Send the user's input to the server via AJAX
+          $.ajax({
+            type: "POST",
+            url: '{% url "chatbot:chatbot_home" %}', // Correct URL with namespace
+            data: {
+              user_input: userInput,
+              csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+            },
+            success: function (response) {
+              // Append the new messages to the conversation dynamically
+              $("#conversation").append(
+                "<p><strong>You:</strong> " + userInput + "</p>"
+              );
+              $("#conversation").append(
+                "<p><strong>Bot:</strong> " + response.response + "</p>"
+              );
+
+              // Scroll the conversation container to the bottom
+              var conversationContainer = $("#conversation-container");
+              conversationContainer.scrollTop(
+                conversationContainer[0].scrollHeight
+              );
+
+              // Clear the input field after sending
+              $("#user_input").val("");
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
