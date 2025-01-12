@@ -22,8 +22,8 @@
       <button type="submit">Send</button>
     </form>
 
+    <h2>Conversation:</h2>
     <div id="conversation-container">
-      <h2>Conversation:</h2>
       <div id="conversation">
         {% for message in conversation %}
         <p><strong>You:</strong> {{ message.user }}</p>
