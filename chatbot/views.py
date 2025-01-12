@@ -9,7 +9,8 @@ load_dotenv()
 
 chatbot_instance = Chatbot(
     WEATHER_API_KEY=os.getenv("WEATHER_API_KEY"),
-    JOKE_API_KEY=os.getenv("JOKE_API_KEY")
+    JOKE_API_KEY=os.getenv("JOKE_API_KEY"),
+    google_translate_key=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
 )
 
 from django.http import JsonResponse

@@ -9,28 +9,29 @@
   </head>
 
   <body>
-    <h1>Chatbot Interface</h1>
-
+    <!-- <img class="logo" src="{% static 'images/ecology.png' %}" /> -->
+    <div id="conversation-container">
+      <div class="conversation">
+        {% for message in conversation %}
+        <p class="user_text">
+          <strong>You<br /></strong> {{ message.user }}
+        </p>
+        <p class="bot_text">
+          <strong>Bot<br /></strong> {{ message.bot }}
+        </p>
+        {% endfor %}
+      </div>
+    </div>
     <form
       id="chat-form"
       method="post"
       action="{% url 'chatbot:chatbot_home' %}"
     >
       {% csrf_token %}
-      <label for="user_input">Your message:</label>
       <input type="text" id="user_input" name="user_input" required />
       <button type="submit">Send</button>
     </form>
 
-    <h2>Conversation:</h2>
-    <div id="conversation-container">
-      <div id="conversation">
-        {% for message in conversation %}
-        <p><strong>You:</strong> {{ message.user }}</p>
-        <p><strong>Bot:</strong> {{ message.bot }}</p>
-        {% endfor %}
-      </div>
-    </div>
     <script>
       $(document).ready(function () {
         $("#chat-form").submit(function (event) {
@@ -48,11 +49,15 @@
             },
             success: function (response) {
               // Append the new messages to the conversation dynamically
-              $("#conversation").append(
-                "<p><strong>You:</strong> " + userInput + "</p>"
+              $(".conversation").append(
+                "<p class='user_text'><strong>You<br /></strong> " +
+                  userInput +
+                  "</p>"
               );
-              $("#conversation").append(
-                "<p><strong>Bot:</strong> " + response.response + "</p>"
+              $(".conversation").append(
+                "<p class='bot_text'><strong>Bot<br /></strong> " +
+                  response.response +
+                  "</p>"
               );
 
               // Scroll the conversation container to the bottom
@@ -66,6 +71,39 @@
             },
           });
         });
+      });
+    </script>
+    <script>
+      const conversationContainer = document.getElementById(
+        "conversation-container"
+      );
+
+      let isMouseDown = false;
+      let startX;
+      let scrollLeft;
+
+      conversationContainer.addEventListener("mousedown", (e) => {
+        isMouseDown = true;
+        startX = e.pageX - conversationContainer.offsetLeft;
+        scrollLeft = conversationContainer.scrollLeft;
+        conversationContainer.style.cursor = "grabbing";
+      });
+
+      conversationContainer.addEventListener("mouseup", () => {
+        isMouseDown = false;
+        conversationContainer.style.cursor = "grab";
+      });
+
+      conversationContainer.addEventListener("mouseleave", () => {
+        isMouseDown = false;
+        conversationContainer.style.cursor = "grab";
+      });
+
+      conversationContainer.addEventListener("mousemove", (e) => {
+        if (!isMouseDown) return;
+        const x = e.pageX - conversationContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        conversationContainer.scrollLeft = scrollLeft - walk;
       });
     </script>
   </body>

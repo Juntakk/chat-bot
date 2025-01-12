@@ -29,7 +29,9 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chatbot',
+    'livereload',
+    'debug_toolbar',
 ]
 # settings.py
 
@@ -56,10 +60,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'livereload.middleware.LiveReloadScript',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'chatbotdjango.urls'
-
+INTERNAL_IPS = [
+    '127.0.0.1',  # Add localhost
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -130,7 +138,7 @@ STATIC_URL = '/static/'
 
 # If you want to collect static files in production
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "D:\Projects\chat-bot\chatbot\static",
 ]
 
 
