@@ -33,6 +33,7 @@ class Chatbot:
         r"help|assist": "Sure, I'm here to help. Ask me anything!",
         r"why should i hire nick": "Because he is the best",
         r"set a reminder to (.+)": self.set_reminder,
+        r"add reminder (.+)": self.set_reminder,
         r"what are my reminders|show my reminders|\breminders\b": self.recall_reminders,
         r"delete reminder (\d+)|remove reminder (\d+)": self.delete_reminder,
         r"delete reminder (.+)|remove reminder (.+)": self.delete_reminder,
@@ -49,9 +50,9 @@ class Chatbot:
         r"aide|assistance": "Bien sûr, je suis là pour vous aider. Demandez-moi n'importe quoi!",
         r"pourquoi devrais-je embaucher nick": "Parce qu'il est le meilleur",
         r"ajoute (?:un )?rappel (?:pour )?(.+)": self.set_reminder,
-        r"\brappels\b|quels sont mes rappels|montre mes rappels": self.recall_reminders,
-        r"(?:supprime (?:le )?rappel|enl[èéêe]ve (?:le )?rappel) (\d+)": self.delete_reminder,  # Fixed pattern
-        r"(?:supprime (?:le )?rappel|enl[èéêe]ve (?:le )?rappel) (.+)": self.delete_reminder,   # Fixed pattern
+        r"quels sont mes rappels|montre mes rappels|\brappels\b": self.recall_reminders,
+        r"enl[èéêe]ve (?:le )?rappel (\d+)": self.delete_reminder,  # Fixed pattern
+        r"(?:supprime (?:le )?rappel|enl[èéêe]ve (?:le)? rappel) (.+)": self.delete_reminder,   # Fixed pattern
     }
 }
 
@@ -73,14 +74,12 @@ class Chatbot:
 
     def detect_language(self, user_input):
         try:
-            language = detect(user_input)
-
-            if language == "hr" and "bonjour" in user_input.lower():
-                return "fr"
-            # if language == "ca" or language == "cy" or language == "fi" or language == "it":
-            #     return "fr"
-            return language
+         DetectorFactory.seed = 0  # Ensure consistent results
+         language = detect(user_input)
+         print(f"Detected language: {language}")  # Debug statement
+         return language
         except:
+            print("Language detection failed, defaulting to 'en'")  # Debug statement
             return "en"
 
     def translate_response(self, text, target_language):
